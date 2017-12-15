@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private Button mSuspectButton;
+    private Button mCallSuspectButton;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle bundle = new Bundle();
@@ -186,12 +188,24 @@ public class CrimeFragment extends Fragment {
         mReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_TEXT,getCrimeReport());
-                i.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.crime_report_subject));
-                i = Intent.createChooser(i, getString(R.string.send_report));
-                startActivity(i);
+                String mimeType = "text/plain";
+                //String title = "Example title";
+                Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity())
+                        .setChooserTitle("TITLEEE")
+                        .setType(mimeType)
+                        .setText(getCrimeReport())
+                        .setSubject(getString(R.string.crime_report_subject))
+                        .createChooserIntent();
+                if (shareIntent.resolveActivity(getActivity().getPackageManager()) != null){
+                    startActivity(shareIntent);
+                }
+
+//                Intent i = new Intent(Intent.ACTION_SEND);
+//                i.setType("text/plain");
+//                i.putExtra(Intent.EXTRA_TEXT,getCrimeReport());
+//                i.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.crime_report_subject));
+//                i = Intent.createChooser(i, getString(R.string.send_report));
+//                startActivity(i);
             }
         });
 
@@ -206,8 +220,20 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mCallSuspectButton = v.findViewById(R.id.call_suspect);
+        mSuspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         if(mCrime.getSuspect() != null){
             mSuspectButton.setText(mCrime.getSuspect());
+        }
+
+        if(mCrime.getSuspect() == null){
+            mCallSuspectButton.setEnabled(false);
         }
 
         PackageManager packageManager = getActivity().getPackageManager();
