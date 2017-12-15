@@ -114,10 +114,10 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }
-        else
-            if(mLastClickedIndex>-1)
-                mAdapter.notifyItemChanged(mLastClickedIndex);
-
+        else {
+            mAdapter.setCrimes(crimes);
+            mAdapter.notifyItemChanged(mLastClickedIndex);
+        }
         updateSubtitle();
     }
 
@@ -170,7 +170,10 @@ public class CrimeListFragment extends Fragment {
         public void onBindViewHolder(CrimeHolder holder, int position) {
             Crime crime = mCrimes.get(position);
             holder.bind(crime);
+        }
 
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
         }
 
         @Override
