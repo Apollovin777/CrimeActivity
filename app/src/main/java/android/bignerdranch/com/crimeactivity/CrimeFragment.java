@@ -2,6 +2,7 @@ package android.bignerdranch.com.crimeactivity;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,6 +27,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.text.format.DateFormat;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.widget.Toast;
 
 
 import java.util.Date;
@@ -106,6 +109,16 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mCrime.getSuspect() == null){
+            mCallSuspectButton.setEnabled(false);
+        }
+        else
+            mCallSuspectButton.setEnabled(true);
     }
 
     private String getCrimeReport(){
@@ -221,10 +234,36 @@ public class CrimeFragment extends Fragment {
         });
 
         mCallSuspectButton = v.findViewById(R.id.call_suspect);
-        mSuspectButton.setOnClickListener(new View.OnClickListener() {
+        mCallSuspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PackageManager packageManager = getActivity().getPackageManager();
+                if (packageManager.resolveActivity(new Intent(Intent.ACTION_DIAL),
+                        PackageManager.MATCH_DEFAULT_ONLY) == null) {
+                    Toast.makeText(getActivity(),"You can't call now",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                ContentResolver cr = getActivity().getContentResolver();
+                Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
+                        "DISPLAY_NAME = '" + mCrime.getSuspect() + "'", null, null);
+                String number = "";
+                if (cursor.moveToFirst()) {
+                    String contactId =
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                    Cursor phones = cr.query(Phone.CONTENT_URI, null,
+                            Phone.CONTACT_ID + " = " + contactId, null, null);
+                    while (phones.moveToNext()) {
+                        number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
+                    }
+                    phones.close();
 
+                    cursor.close();
+                    if (number != null) {
+                        Uri call = Uri.parse(number);
+                        Intent shareIntent = new Intent(Intent.ACTION_DIAL, call);
+                        startActivity(shareIntent);
+                    }
+                }
             }
         });
 
