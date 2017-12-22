@@ -24,7 +24,7 @@ public class CrimeListFragment extends Fragment {
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
-    private int mLastClickedIndex=0;
+    private int mLastClickedIndex;
     private boolean mSubtitleVisible;
     private Callbacks mCallbacks;
 
@@ -169,9 +169,7 @@ public class CrimeListFragment extends Fragment {
             mCallbacks.onCrimeSelected(mCrime);
         }
     }
-
-
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
+    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -199,6 +197,7 @@ public class CrimeListFragment extends Fragment {
             return mCrimes.size();
         }
     }
+
 
 
 

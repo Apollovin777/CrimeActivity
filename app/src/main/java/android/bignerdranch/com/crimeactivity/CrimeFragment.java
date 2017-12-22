@@ -213,20 +213,6 @@ public class CrimeFragment extends Fragment {
         }
     }
 
-
-//    private void updatePhotoView(){
-//        if (mPhotoFile == null || !mPhotoFile.exists()){
-//            mPhotoView.setImageDrawable(null);
-//            mPhotoView.setClickable(false);
-//        }
-//        else {
-//            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(),getActivity());
-//            mPhotoView.setImageBitmap(bitmap);
-//            mPhotoView.setClickable(true);
-//        }
-//
-//    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -250,10 +236,6 @@ public class CrimeFragment extends Fragment {
                 fragment.show(manager,DIALOG_PHOTO);
                 }
         });
-
-
-
-
 
         mPhotoButton = v.findViewById(R.id.crime_camera);
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
