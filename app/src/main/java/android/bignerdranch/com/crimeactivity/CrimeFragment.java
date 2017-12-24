@@ -68,6 +68,7 @@ public class CrimeFragment extends Fragment {
 
     public interface Callbacks{
         void onCrimeUpdated(Crime crime);
+        void onCrimeDeleted(Crime crime);
     }
 
     @Override
@@ -100,12 +101,23 @@ public class CrimeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_crime:
-                CrimeLab crimeLab = CrimeLab.get(getContext());
-                crimeLab.deleteCrime(mCrime);
-                getActivity().finish();
+                CrimeLab.get(getActivity()).deleteCrime(mCrime);
+                //If we're in a "detail" fragment, we have to update the list side
+                //of the tablet.
+                Activity activity = getActivity();
+                if (activity.findViewById(R.id.detail_fragment_container) != null) {
+                    updateCrime();
+                }
+                //Let the callback function in the respected fragment handle what to
+                //do from here.
+                mCallbacks.onCrimeDeleted(mCrime);
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                //This handles the case for phones only since if we get here then
+                //we've use the toolbar "up" navigation. Our CrimePagerActivity(for phones)
+                //will simply call finish().
+                mCallbacks.onCrimeDeleted(mCrime);
+                return true;
         }
     }
 
