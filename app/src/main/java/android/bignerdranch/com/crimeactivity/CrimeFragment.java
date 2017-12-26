@@ -39,8 +39,6 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -207,7 +205,7 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updateDate() {
-        mDateButton.setText(mCrime.getDate().toString());
+        mDateButton.setText(java.text.DateFormat.getDateInstance().format(mCrime.getDate()));
     }
 
     private void updatePhotoView() {
